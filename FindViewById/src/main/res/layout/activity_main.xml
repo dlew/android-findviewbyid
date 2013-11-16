@@ -54,10 +54,9 @@
 
         <!-- Test View hierarchy -->
 
-        <FrameLayout
+        <include
             android:id="@+id/test_container"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            layout="@layout/child" />
 
     </LinearLayout>
 

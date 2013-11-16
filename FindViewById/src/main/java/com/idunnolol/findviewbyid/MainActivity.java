@@ -15,6 +15,9 @@ public class MainActivity extends ActionBarActivity {
 
     private ViewGroup mContainer;
 
+    private int mDepth = 0;
+    private int mNumChildrenPerNode = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,13 +31,15 @@ public class MainActivity extends ActionBarActivity {
         findViewById(R.id.add_depth_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addDepth(mContainer);
+                mDepth++;
+                checkTree(mContainer, 0);
             }
         });
         findViewById(R.id.add_child_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                mNumChildrenPerNode++;
+                checkTree(mContainer, 0);
             }
         });
         findViewById(R.id.run_test_button).setOnClickListener(new View.OnClickListener() {
@@ -46,28 +51,37 @@ public class MainActivity extends ActionBarActivity {
         findViewById(R.id.reset_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                mDepth = 0;
+                mNumChildrenPerNode = 1;
+                reset(mContainer);
             }
         });
     }
 
-    // Recursively visit each ViewGroup in the hierarchy; if it has no children,
-    // add a child layout to it.
-    private void addDepth(ViewGroup view) {
-        int childCount = view.getChildCount();
-        if (childCount == 0) {
-            // Change layout params - depend on child to define basic width/height
+    // Recursively checks each node to see if it follows the current params set out
+    private void checkTree(ViewGroup view, int depth) {
+        if (depth < mDepth) {
+            // If we're not at max depth, check that this node has enough children
+            while (view.getChildCount() < mNumChildrenPerNode) {
+                view.addView(inflateChildLayout(view));
+            }
+
+            // For each child, check their integrity
+            for (int a = 0; a < view.getChildCount(); a++) {
+                checkTree((ViewGroup) view.getChildAt(a), depth + 1);
+            }
+        }
+
+        // If this view group has children, depend on child to define width/height
+        if (view.getChildCount() != 0) {
             ViewGroup.LayoutParams params = view.getLayoutParams();
             params.width = ViewGroup.LayoutParams.WRAP_CONTENT;
             params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        }
+    }
 
-            view.addView(inflateChildLayout(view));
-        }
-        else {
-            for (int a = 0; a < childCount; a++) {
-                addDepth((ViewGroup) view.getChildAt(a));
-            }
-        }
+    private void reset(ViewGroup view) {
+        view.removeAllViews();
     }
 
     private ViewGroup inflateChildLayout(ViewGroup parent) {
