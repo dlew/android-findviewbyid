@@ -3,4 +3,9 @@
 
     <string name="app_name">FindViewById</string>
 
+    <string name="add_depth">Add D</string>
+    <string name="add_children">Add C</string>
+    <string name="run">Run</string>
+    <string name="reset">Reset</string>
+
 </resources>
