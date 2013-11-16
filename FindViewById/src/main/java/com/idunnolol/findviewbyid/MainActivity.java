@@ -6,6 +6,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import java.util.Random;
 
@@ -13,10 +14,13 @@ public class MainActivity extends ActionBarActivity {
 
     private Random mRandom;
 
+    private TextView mResultsTextView;
     private ViewGroup mContainer;
 
     private int mDepth = 0;
     private int mNumChildrenPerNode = 1;
+
+    private int mId = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +30,7 @@ public class MainActivity extends ActionBarActivity {
 
         setContentView(R.layout.activity_main);
 
+        mResultsTextView = (TextView) findViewById(R.id.results_text_view);
         mContainer = (ViewGroup) findViewById(R.id.test_container);
 
         findViewById(R.id.add_depth_button).setOnClickListener(new View.OnClickListener() {
@@ -45,7 +50,7 @@ public class MainActivity extends ActionBarActivity {
         findViewById(R.id.run_test_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                runTest(100);
             }
         });
         findViewById(R.id.reset_button).setOnClickListener(new View.OnClickListener() {
@@ -53,6 +58,7 @@ public class MainActivity extends ActionBarActivity {
             public void onClick(View v) {
                 mDepth = 0;
                 mNumChildrenPerNode = 1;
+                mId = 1;
                 reset(mContainer);
             }
         });
@@ -91,6 +97,24 @@ public class MainActivity extends ActionBarActivity {
         int color = Color.rgb(mRandom.nextInt(256), mRandom.nextInt(256), mRandom.nextInt(256));
         viewGroup.setBackgroundColor(color);
 
+        // Give it an ID we can use to look it up
+        viewGroup.setId(mId);
+        mId++;
+
         return viewGroup;
+    }
+
+    private void runTest(int numTimes) {
+        long start, end;
+        long total = 0;
+        for (int a = 0; a < numTimes; a++) {
+            start = System.nanoTime();
+            mContainer.findViewById(mId); // Find the FURTHEST id
+            end = System.nanoTime();
+            total += end - start;
+        }
+
+        long avg = total / numTimes;
+        mResultsTextView.setText("Avg Time for findViewById(" + mId + "): " + avg + " ns (" + (avg / 1000000) + " ms)");
     }
 }
