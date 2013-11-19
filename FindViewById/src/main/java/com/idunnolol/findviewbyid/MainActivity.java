@@ -47,13 +47,14 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 mNumChildrenPerNode++;
+                updateStatus();
                 checkTree(mContainer, 0);
             }
         });
         findViewById(R.id.run_test_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                runTest(100);
+                runTest(getRunTimes());
             }
         });
         findViewById(R.id.reset_button).setOnClickListener(new View.OnClickListener() {
@@ -71,7 +72,17 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void updateStatus() {
-        mStatusTextView.setText("Depth=" + mDepth + " Children (per node)=" + mNumChildrenPerNode + " total=" + mDepth * mNumChildrenPerNode);
+        mStatusTextView.setText("Depth=" + mDepth + " Views (per node)=" + mNumChildrenPerNode + " total=" + getViewCount() + " testIterations=" + getRunTimes());
+    }
+
+    // Modulate based on number of nodes, so we don't ever quite overload the system
+    // Minimum bound of 100
+    private int getRunTimes() {
+        return Math.max(100, 2000 - getViewCount());
+    }
+
+    private int getViewCount() {
+        return (int) Math.pow(mDepth, mNumChildrenPerNode);
     }
 
     // Recursively checks each node to see if it follows the current params set out
