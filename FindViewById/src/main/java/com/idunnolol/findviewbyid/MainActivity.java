@@ -6,6 +6,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.Random;
@@ -13,6 +14,11 @@ import java.util.Random;
 public class MainActivity extends ActionBarActivity {
 
     private Random mRandom;
+
+    private Button mDepthButton;
+    private Button mChildrenButton;
+    private Button mRunButton;
+    private Button mResetButton;
 
     private TextView mStatusTextView;
     private TextView mResultsTextView;
@@ -31,11 +37,15 @@ public class MainActivity extends ActionBarActivity {
 
         setContentView(R.layout.activity_main);
 
+        mDepthButton = (Button) findViewById(R.id.add_depth_button);
+        mChildrenButton = (Button) findViewById(R.id.add_child_button);
+        mRunButton = (Button) findViewById(R.id.run_test_button);
+        mResetButton = (Button) findViewById(R.id.reset_button);
         mStatusTextView = (TextView) findViewById(R.id.status_text_view);
         mResultsTextView = (TextView) findViewById(R.id.results_text_view);
         mContainer = (ViewGroup) findViewById(R.id.test_container);
 
-        findViewById(R.id.add_depth_button).setOnClickListener(new View.OnClickListener() {
+        mDepthButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mDepth++;
@@ -43,7 +53,7 @@ public class MainActivity extends ActionBarActivity {
                 checkTree(mContainer, 0);
             }
         });
-        findViewById(R.id.add_child_button).setOnClickListener(new View.OnClickListener() {
+        mChildrenButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mNumChildrenPerNode++;
@@ -51,13 +61,13 @@ public class MainActivity extends ActionBarActivity {
                 checkTree(mContainer, 0);
             }
         });
-        findViewById(R.id.run_test_button).setOnClickListener(new View.OnClickListener() {
+        mRunButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 runTest(getRunTimes());
             }
         });
-        findViewById(R.id.reset_button).setOnClickListener(new View.OnClickListener() {
+        mResetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mDepth = 0;
@@ -125,17 +135,41 @@ public class MainActivity extends ActionBarActivity {
         return viewGroup;
     }
 
-    private void runTest(int numTimes) {
-        long start, end;
-        long total = 0;
-        for (int a = 0; a < numTimes; a++) {
-            start = System.nanoTime();
-            mContainer.findViewById(mId); // Find the FURTHEST id
-            end = System.nanoTime();
-            total += end - start;
-        }
+    private void runTest(final int numTimes) {
+        setButtonsEnabled(false);
 
-        long avg = total / numTimes;
-        mResultsTextView.setText("Avg Time for findViewById(" + mId + "): " + avg + " ns (" + (avg / 1000000) + " ms)");
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                long start, end;
+                long total = 0;
+                for (int a = 0; a < numTimes; a++) {
+                    start = System.nanoTime();
+                    mContainer.findViewById(mId); // Find the FURTHEST id
+                    end = System.nanoTime();
+                    total += end - start;
+                }
+
+                long avg = total / numTimes;
+                final String statusText = "Avg Time for findViewById(" + mId + "): " + avg + " ns (" + (avg / 1000000) + " ms)";
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mResultsTextView.setText(statusText);
+                        setButtonsEnabled(true);
+                    }
+                });
+            }
+        });
+        t.start();
     }
+
+    private void setButtonsEnabled(boolean enabled) {
+        mDepthButton.setEnabled(enabled);
+        mChildrenButton.setEnabled(enabled);
+        mRunButton.setEnabled(enabled);
+        mResetButton.setEnabled(enabled);
+    }
+
 }
