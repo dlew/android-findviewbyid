@@ -39,6 +39,12 @@
             android:text="@string/reset" />
     </LinearLayout>
 
+    <!-- Status output -->
+    <TextView
+        android:id="@+id/status_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <!-- Results output -->
 
     <TextView

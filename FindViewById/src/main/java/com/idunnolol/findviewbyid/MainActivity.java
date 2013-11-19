@@ -14,6 +14,7 @@ public class MainActivity extends ActionBarActivity {
 
     private Random mRandom;
 
+    private TextView mStatusTextView;
     private TextView mResultsTextView;
     private ViewGroup mContainer;
 
@@ -30,6 +31,7 @@ public class MainActivity extends ActionBarActivity {
 
         setContentView(R.layout.activity_main);
 
+        mStatusTextView = (TextView) findViewById(R.id.status_text_view);
         mResultsTextView = (TextView) findViewById(R.id.results_text_view);
         mContainer = (ViewGroup) findViewById(R.id.test_container);
 
@@ -37,6 +39,7 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 mDepth++;
+                updateStatus();
                 checkTree(mContainer, 0);
             }
         });
@@ -59,9 +62,16 @@ public class MainActivity extends ActionBarActivity {
                 mDepth = 0;
                 mNumChildrenPerNode = 1;
                 mId = 1;
+                updateStatus();
                 reset(mContainer);
             }
         });
+
+        updateStatus();
+    }
+
+    private void updateStatus() {
+        mStatusTextView.setText("Depth=" + mDepth + " Children (per node)=" + mNumChildrenPerNode + " total=" + mDepth * mNumChildrenPerNode);
     }
 
     // Recursively checks each node to see if it follows the current params set out
