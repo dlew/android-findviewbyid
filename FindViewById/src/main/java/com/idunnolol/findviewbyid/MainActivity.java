@@ -86,7 +86,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void updateStatus() {
-        mStatusTextView.setText("Depth=" + mDepth + " Views (per node)=" + mNumChildrenPerNode + " total=" + getViewCount() + " testIterations=" + getRunTimes());
+        mStatusTextView.setText("depth=" + mDepth + " viewsPerNode=" + mNumChildrenPerNode + " totalViews=" + getViewCount() + " testIterations=" + getRunTimes());
     }
 
     // Modulate based on number of nodes, so we don't ever quite overload the system
@@ -154,7 +154,10 @@ public class MainActivity extends ActionBarActivity {
                 long total = 0;
                 for (int a = 0; a < numTimes; a++) {
                     start = System.nanoTime();
-                    mContainer.findViewById(mId); // Find past the FURTHEST id
+
+                    // Find past the FURTHEST id, so it has to scan all the nodes and then fails
+                    mContainer.findViewById(mId);
+
                     end = System.nanoTime();
                     total += end - start;
                 }
