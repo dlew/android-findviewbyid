@@ -51,6 +51,7 @@ public class MainActivity extends ActionBarActivity {
                 mDepth++;
                 updateStatus();
                 checkTree(mContainer, 0);
+                mResultsTextView.setText(null);
             }
         });
         mChildrenButton.setOnClickListener(new View.OnClickListener() {
@@ -59,11 +60,13 @@ public class MainActivity extends ActionBarActivity {
                 mNumChildrenPerNode++;
                 updateStatus();
                 checkTree(mContainer, 0);
+                mResultsTextView.setText(null);
             }
         });
         mRunButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mResultsTextView.setText("Running test...");
                 runTest(getRunTimes());
             }
         });
@@ -74,6 +77,7 @@ public class MainActivity extends ActionBarActivity {
                 mNumChildrenPerNode = 1;
                 mId = 1;
                 updateStatus();
+                mResultsTextView.setText(null);
                 reset(mContainer);
             }
         });
@@ -145,7 +149,7 @@ public class MainActivity extends ActionBarActivity {
                 long total = 0;
                 for (int a = 0; a < numTimes; a++) {
                     start = System.nanoTime();
-                    mContainer.findViewById(mId); // Find the FURTHEST id
+                    mContainer.findViewById(mId); // Find past the FURTHEST id
                     end = System.nanoTime();
                     total += end - start;
                 }
