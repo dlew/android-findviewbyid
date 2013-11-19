@@ -96,7 +96,12 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private int getViewCount() {
-        return (int) Math.pow(mDepth, mNumChildrenPerNode);
+        // TODO: I'm sure there's a more mathy way of doing this
+        int count = 0;
+        for (int a = 0; a < mDepth; a++) {
+            count += (int) Math.pow(mNumChildrenPerNode, a + 1);
+        }
+        return count;
     }
 
     // Recursively checks each node to see if it follows the current params set out
